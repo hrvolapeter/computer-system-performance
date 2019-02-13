@@ -1,0 +1,10 @@
+[package]
+name = "csp"
+version = "0.1.0"
+authors = ["retep007 <peter.hrvola@airtame.com>"]
+edition = "2018"
+
+[dependencies]
+rayon = "1.0.3"
+glob = "0.2.11"
+csv = "1.0.5"
