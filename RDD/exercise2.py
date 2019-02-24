@@ -5,8 +5,26 @@ from datetime import datetime
 from pyspark.sql.types import *
 import time
 
+coreCount = '*'
+masterMode = 'local[' + coreCount + ']'
+execMem = '500m'
+driverMem = '500m'
+
 totalParseErrors = 0
-sc = SparkContext('local[*]')
+conf = (SparkConf()
+        .setMaster(masterMode)
+        .set('spark.executor.memory', execMem)
+        .set('spark.driver.memory', driverMem)
+       )
+
+        # .set('spark.executor.memory', '4g')
+
+# spark-submit exercise2.py --driver-memory 20g --executor-memory 20g
+# spark-submit exercise2.py --driver-memory 500m --executor-memory 500m
+# spark-submit exercise2.py --driver-memory 1g --executor-memory 1g
+
+# sc = SparkContext('local[*]')
+sc = SparkContext(conf=conf)
 spark = SparkSession(sc)
 
 schema = StructType([
@@ -143,3 +161,19 @@ print("\r\n")
 print("Dataframe 'load' time: ", time2 - time1)
 print("RDD.count time: ", time3 - time2)
 print("RDD Calculation time (seconds): ", time4 - time3)
+
+
+epoch = str(int(time.time()))
+fileName = epoch + '_' + coreCount + 'core_' + driverMem + 'mem'
+f = open(fileName + '.log',"w+")
+
+
+content = (
+    "Config:  CPU core: " + coreCount + "  Driver memory: " + driverMem + "  Executor memory: " + execMem + "\r\n" +
+    "Dataframe load time: " + str(time2 - time1) + "\r\n" +
+    "RDD.count time:" + str(time3-time2) + "\r\n" +
+    "RDD Calculation time: " + str(time4-time3) + "\r\n"
+    )
+
+f.write(content)
+f.close()
