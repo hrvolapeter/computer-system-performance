@@ -4,21 +4,23 @@ from pyspark.sql.session import SparkSession
 from datetime import datetime
 from pyspark.sql.types import *
 import time
+# import argparse
 
-coreCount = '*'
-masterMode = 'local[' + coreCount + ']'
-execMem = '500m'
-driverMem = '500m'
+# coreCount = '*'
+# execMem = '1g'
+# driverMem = '1g'
+# masterMode = 'local[' + coreCount + ']'
 
-totalParseErrors = 0
 conf = (SparkConf()
-        .setMaster(masterMode)
-        .set('spark.executor.memory', execMem)
-        .set('spark.driver.memory', driverMem)
+        # .setMaster(masterMode)
+        # .set('spark.executor.memory', execMem)
+        # .set('spark.driver.memory', driverMem)
        )
 
+totalParseErrors = 0
         # .set('spark.executor.memory', '4g')
 
+# spark-submit --master local[*] --driver-memory 500m --executor-memory 500m exercise2.py
 # spark-submit exercise2.py --driver-memory 20g --executor-memory 20g
 # spark-submit exercise2.py --driver-memory 500m --executor-memory 500m
 # spark-submit exercise2.py --driver-memory 1g --executor-memory 1g
@@ -126,7 +128,7 @@ myRdd = df.rdd
 
 time2 = time.time()
 
-myRdd.count()
+# myRdd.count()
 
 time3 = time.time()
 
@@ -155,6 +157,7 @@ time4 = time.time()
 print("\r\n")
 
 print(paymentData.take(12))
+time5 = time.time()
 
 print("\r\n")
 
@@ -164,15 +167,18 @@ print("RDD Calculation time (seconds): ", time4 - time3)
 
 
 epoch = str(int(time.time()))
-fileName = epoch + '_' + coreCount + 'core_' + driverMem + 'mem'
+# fileName = epoch + '_' + coreCount + 'core_' + driverMem + 'mem'
+fileName = epoch
 f = open(fileName + '.log',"w+")
 
 
 content = (
-    "Config:  CPU core: " + coreCount + "  Driver memory: " + driverMem + "  Executor memory: " + execMem + "\r\n" +
+    # "Config:  CPU core: " + coreCount + "  Driver memory: " + driverMem + "  Executor memory: " + execMem + "\r\n" +
+    "Config:  " + str(sc._conf.getAll()) + "\r\n\r\n" +
     "Dataframe load time: " + str(time2 - time1) + "\r\n" +
     "RDD.count time:" + str(time3-time2) + "\r\n" +
     "RDD Calculation time: " + str(time4-time3) + "\r\n"
+    "Total time: " + str(time5-time1) + "\r\n"
     )
 
 f.write(content)
